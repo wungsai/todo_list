@@ -12,11 +12,10 @@ class WorkingWithFile {
     var dir = await getApplicationDocumentsDirectory();
     file = File('${dir.path}/$_fileName');
     if (await File('${dir.path}/$_fileName').exists()) {
-      log("exist");
       return file;
     } else {
       file.create();
-      log("new");
+
       return file;
     }
   }
@@ -37,7 +36,7 @@ class WorkingWithFile {
     File file = await _getFile();
     String text;
     text = await file.readAsString();
-    log("text: $text");
+
     return text;
   }
 
