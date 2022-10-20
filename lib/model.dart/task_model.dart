@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final taskModel = taskModelFromJson(jsonString);
-
 import 'dart:convert';
 
 List<TaskModel> taskModelFromJson(String str) =>
@@ -12,22 +8,24 @@ String taskModelToJson(List<TaskModel> data) =>
 
 class TaskModel {
   TaskModel({
+    this.id = "",
     this.title = "",
     this.details = "",
     this.completed = false,
   });
-
+  String id;
   String title;
   String details;
   bool completed;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
-        title: json["title"] ?? "",
-        details: json["details"] ?? "",
-        completed: json["completed"] ?? "",
-      );
+      id: json["id"] ?? "",
+      title: json["title"] ?? "",
+      details: json["details"] ?? "",
+      completed: json["completed"] ?? false);
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "title": title,
         "details": details,
         "completed": completed,

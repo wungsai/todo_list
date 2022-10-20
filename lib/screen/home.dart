@@ -40,9 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("To do"),
+        title: const Text("To do"),
       ),
       body: hasData
           ? ListView.builder(
@@ -54,14 +52,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
                         return AddNewTask(
+                          id: task.id,
                           edit: true,
+                          title: task.title,
+                          details: task.details,
                         );
                       },
-                    ));
+                    )).whenComplete(() async => checkData());
                   },
-                  leading: Icon(task.completed
-                      ? Icons.check_circle_sharp
-                      : Icons.circle_outlined),
+                  leading: InkWell(
+                    onTap: () async {
+                      await file.updateStatus(task.id);
+                      task.completed = !task.completed;
+                      setState(() {});
+                    },
+                    child: Icon(
+                      task.completed
+                          ? Icons.check_circle_sharp
+                          : Icons.circle_outlined,
+                      color: task.completed ? Colors.green : Colors.grey,
+                    ),
+                  ),
                   title: Text(task.title),
                   subtitle: Text(task.details),
                 );
@@ -69,12 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           : const Center(child: Text('empty')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          await file.getData();
+
           Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => AddNewTask(),
-              ));
+              )).whenComplete(() async => checkData());
         },
         tooltip: 'Add new Task',
         child: const Icon(Icons.add),
