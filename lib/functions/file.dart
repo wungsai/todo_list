@@ -6,27 +6,13 @@ import 'package:path_provider/path_provider.dart';
 import '../model.dart/task_model.dart';
 
 class WorkingWithFile {
-  late File file;
-
-  WorkingWithFile() {
-    getFile();
-  }
   String fileName = 'task.txt';
-  Future getFile() async {
+  Future _getFile() async {
     log("getFile");
-    List<TaskModel> taskList = [];
-    String text;
+    File file;
     var dir = await getApplicationDocumentsDirectory();
     file = File('${dir.path}/$fileName');
     if (await File('${dir.path}/$fileName').exists()) {
-      text = await file.readAsString();
-      {
-        var fromFile = json.decode(text);
-        var toList = fromFile.cast<Map<String, dynamic>>();
-        taskList =
-            toList.map<TaskModel>((json) => taskModelFromJson(json)).toList();
-        log("Data: " + jsonEncode(taskList));
-      }
       return file;
     } else {
       file.create();
@@ -34,7 +20,20 @@ class WorkingWithFile {
     }
   }
 
+  Future getData() async {
+    File file = await _getFile();
+    List<TaskModel> taskList = [];
+    String text;
+    text = await file.readAsString();
+    {
+      List fromFile = json.decode(text);
+      taskList = taskModelFromJson(text);
+    }
+    return taskList;
+  }
+
   Future write(String data) async {
+    File file = await _getFile();
     file.writeAsString(data);
   }
 }

@@ -12,19 +12,19 @@ String taskModelToJson(List<TaskModel> data) =>
 
 class TaskModel {
   TaskModel({
-    this.title,
-    this.details,
-    this.completed,
+    this.title = "",
+    this.details = "",
+    this.completed = false,
   });
 
-  String? title;
-  String? details;
-  bool? completed;
+  String title;
+  String details;
+  bool completed;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
-        title: json["title"],
-        details: json["details"],
-        completed: json["completed"],
+        title: json["title"] ?? "",
+        details: json["details"] ?? "",
+        completed: json["completed"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {

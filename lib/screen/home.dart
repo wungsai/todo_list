@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/functions/file.dart';
+import 'package:todo_list/model.dart/task_model.dart';
 import 'package:todo_list/screen/new_task.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -20,15 +21,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   WorkingWithFile file = WorkingWithFile();
+  bool hasData = false;
+  List<TaskModel> tasks = [];
   @override
   void initState() {
-    file.getFile();
+    checkData();
     super.initState();
+  }
+
+  checkData() async {
+    tasks = await file.getData();
+    hasData = tasks.isNotEmpty;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    bool hasData = true;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -38,23 +46,28 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: hasData
           ? ListView.builder(
-              itemCount: 10,
+              itemCount: tasks.length,
               itemBuilder: (context, index) {
+                TaskModel task = tasks[index];
                 return ListTile(
                   onTap: () async {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
-                        return AddNewTask();
+                        return AddNewTask(
+                          edit: true,
+                        );
                       },
                     ));
                   },
-                  leading: Icon(Icons.circle_outlined),
-                  title: Text("title"),
-                  subtitle: Text('details'),
+                  leading: Icon(task.completed
+                      ? Icons.check_circle_sharp
+                      : Icons.circle_outlined),
+                  title: Text(task.title),
+                  subtitle: Text(task.details),
                 );
               },
             )
-          : Center(child: Text('empty')),
+          : const Center(child: Text('empty')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
